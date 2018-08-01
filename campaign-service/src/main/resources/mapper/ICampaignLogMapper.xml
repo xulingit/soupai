@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="info.meihua.campaign.service.dao.ICampaignLogDao">
+    <insert id="insert" parameterType="info.meihua.campaign.service.entity.CampaignLog">
+        INSERT INTO campaign_log
+        (id,type,scope,status,
+        content,
+        replacement,
+        detail,
+        ip,
+        operator,
+        user_id,
+        gmt_create,
+        gmt_modified,
+        campaign_id)
+        VALUES
+        (#{id},#{type},#{scope},#{status},
+        #{content},
+        #{replacement},
+        #{detail},
+        #{ip},
+        #{operator},
+        #{userId},
+        #{gmtCreate},
+        #{gmtModified},
+        #{campaignId});
+    </insert>
+
+    <select id="listByCampaignId" resultType="info.meihua.campaign.service.entity.CampaignLog">
+        SELECT id,type,scope,status,
+        content,
+        replacement,
+        detail,
+        ip,
+        operator,
+        user_id userId,
+        gmt_create gmtCreate,
+        campaign_id campaignId FROM campaign_log WHERE campaign_id = #{campaignId} ORDER BY gmt_create DESC
+    </select>
+
+    <update id="updateStatus" >
+        UPDATE campaign_log
+        SET status=#{status},gmt_modified=#{gmtModified}
+        WHERE id=#{id}
+    </update>
+
+    <update id="updateCampaignLog"  parameterType="java.util.List">
+        <foreach collection="campaignlog" item="item" index="index" open="" close="" separator=";">
+            update campaign_log
+            <set>
+                status=2,gmt_modified=#{item.gmtModified}
+            </set>
+            where id = ${item.id}
+        </foreach>
+    </update>
+    <select id="getCampaignLog"   resultType="info.meihua.campaign.service.entity.CampaignLog">
+      SELECT id,type,scope,status,
+        content,
+        replacement,
+        detail,
+        ip,
+        operator,
+        user_id userId,
+        gmt_create gmtCreate,
+        campaign_id campaignId FROM campaign_log WHERE  user_Id=#{userId}  AND campaign_id=#{campaignId} AND status = 1 AND scope = 1 ORDER BY gmt_create DESC
+    </select>
+<insert id="batchInsertionCampaignLog" parameterType="java.util.List">
+ INSERT INTO campaign_log
+        (id,type,scope,status,
+        content,
+        replacement,
+        detail,
+        ip,
+        operator,
+        user_id,
+        gmt_create,
+        gmt_modified,
+        campaign_id)
+        VALUES
+    <foreach collection="c_list" item="item" index="index" separator=",">
+        (#{item.id},#{item.type},#{item.scope},#{item.status},
+        #{item.content},
+        #{item.replacement},
+        #{item.detail},
+        #{item.ip},
+        #{item.operator},
+        #{item.userId},
+        #{item.gmtCreate},
+        #{item.gmtModified},
+        #{item.campaignId});
+    </foreach>
+
+</insert>
+
+<select id="selectCampaignLog" resultType="info.meihua.campaign.service.entity.CampaignLog">
+  SELECT id,type,scope,status,
+        content,
+        replacement,
+        detail,
+        ip,
+        operator,
+        user_id userId,
+        gmt_create gmtCreate,
+        campaign_id campaignId FROM campaign_log WHERE  type=#{type}  AND campaign_id=#{campaignId} AND scope = #{scope} ORDER BY gmt_create DESC
+</select>
+
+
+    <select id="listAllCampaignLog" resultType="info.meihua.campaign.service.entity.CampaignLog">
+    SELECT id,type,scope,status,
+        content,
+        replacement,
+        detail,
+        ip,
+        operator,
+        user_id userId,
+        gmt_create gmtCreate,
+        campaign_id campaignId FROM campaign_log WHERE  (type=13 or type=1312) AND status=1 AND scope = 1 ORDER BY gmt_create DESC
+    </select>
+</mapper>
